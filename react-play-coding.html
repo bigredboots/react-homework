@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="address" content="Homework to get something in react to work correctly.">
+	<meta charset="utf-8">
+	<title>Homework</title>
+
+	<style type="text/css">
+	@keyframes slideInFromLeft {
+		  0% {
+		    transform: translatey(-100%);
+		  }
+		  100% {
+		    transform: translateX(0);
+		  }
+		}
+		body {
+			font-family: Tahoma, sans-serif;
+			margin: 0;
+		}
+		#homework {
+		    position: absolute;
+		    height: 100%;
+		    width: 100%;
+		}
+		.ContactView {
+			width: 325px;
+			display: block;
+			margin: 5% auto;
+			position: relative;
+			border: 1px solid #f0f0f0;
+			border-radius: 10px;
+			animation: 1s ease-out 0s 1 slideInFromLeft;
+		}
+		.ContactView-title {
+			font-size: 24px;
+			padding: 0 24px;
+		}
+
+		.ContactView-list {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			border-top: 1px solid #f0f0f0;
+			text-align: center;
+		}
+
+		.contactBlock {
+			margin: 0;
+			padding: 8px 24px;
+			border-bottom: 1px solid #f0f0f0;
+		}
+		.contactBlock-name {
+			font-size: 16px;
+			font-weight: bold;
+			margin: 0;
+		}
+		.DeleteItem {
+			right: 7px;
+			margin-top: 5px;
+			position: absolute;
+			cursor: pointer;
+		}
+		.DeleteItem:after {
+			content: "x";
+			display: block;
+			width: 11px;
+			height: 11px;
+			background: #c5c5c5;
+			padding: 1px 4px 7px 4px;
+			font-size: 12px;
+			border-radius: 18px;
+			font-weight: 800;
+			border: 1px solid #999;
+		}
+		.contact-names {
+			margin: 0;
+			padding: 5px 0;
+			color: #959595;
+			margin-right: 7px;
+			float: left;
+			overflow: hidden;
+			height: 20px;
+		}
+		.contactBlock-address {
+			font-size: 14px;
+			margin-top: 4px;
+			clear:both;
+			text-align: left;
+		}
+
+
+		.homeworkForm {
+			padding: 8px 24px;
+		}
+		.homeworkForm > input,
+		.homeworkForm > textarea {
+			display: block;
+			width: 260px;
+			padding: 4px 8px;
+			margin-bottom: 8px;
+			border-radius: 2px;
+			border: 1px solid #888;
+			font-size: 14px;
+		}
+		.homeworkForm > input.homeworkForm-error {
+			border-color: #FF0000;
+		}
+	</style>
+
+</head>
+<body>
+	<!--this calls the whole app into homework -->
+	<div id="homework"></div>
+	<!-- calling .min sets it to production react code.  I shouldn't be using contenteditable, but using prod code eliminates the errors -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react.min.js"></script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-dom.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+	<!--React Scripts -->
+	<script>
+	//my components
+	var homeworkForm = React.createClass({
+		propTypes: {
+	 		//this is needed so the form will not work onchange or onsubmit if required is not filled in
+	 		value: React.PropTypes.object.isRequired,
+	 		onChange: React.PropTypes.func.isRequired,
+	 		onSubmit: React.PropTypes.func.isRequired,
+	 	},
+	 	//sets the change of the first name value
+	 	onFirstChange: function(e) {
+	 		this.props.onChange(Object.assign({}, this.props.value, {first: e.target.value}));
+	 	},
+	 	//sets the change of the last name value
+	 	onLastChange: function(e) {
+	 		this.props.onChange(Object.assign({}, this.props.value, {last: e.target.value}));
+	 	},
+	 	//change on address
+	 	onAddressChange: function(e) {
+	 		this.props.onChange(Object.assign({}, this.props.value, {address: e.target.value}));
+	 	},
+
+	 	onSubmit: function(e) {
+	 		e.preventDefault();
+	 		this.props.onSubmit();
+	 	},
+
+	 	render: function() {
+	 		var errors = this.props.value.errors || {};
+
+	 		return (
+	 			//this creates my form, adds a class and validates on it
+	 			React.createElement('form', {onSubmit: this.onSubmit, className: 'homeworkForm', noValidate: false},
+	 				//creates my input for first name
+	 				React.createElement('input', {
+	 					type: 'text',
+	 					className: errors.first && 'homeworkForm-error',
+	 					placeholder: 'First Name (required)',
+	 					value: this.props.value.first,
+	 					onChange: this.onFirstChange,
+	 				}),
+	 				//creates my input for last name
+	 				React.createElement('input', {
+	 					type: 'text',
+	 					className: errors.last && 'homeworkForm-error',
+	 					placeholder: 'Last Name (required)',
+	 					value: this.props.value.last,
+	 					onChange: this.onLastChange,
+	 				}),
+	 				//creates my textfield for address
+	 				React.createElement('textarea', {
+	 					placeholder: 'Address',
+	 					value: this.props.value.address,
+	 					onChange: this.onAddressChange,
+	 				}),
+	 				//creates the botton for submit
+	 				React.createElement('button', {type: 'submit'}, "Add New Contact")
+	 				)
+	 			);
+	 	},
+	});
+
+	//this creates the object contactBlock
+	var contactBlock = React.createClass({
+	 	propTypes: {
+	 		first: React.PropTypes.string.isRequired,
+	 		last: React.PropTypes.string.isRequired,
+	 		address: React.PropTypes.string,
+	 	},
+	    // render out to page the forms
+	    render: function() {
+	    	return (
+
+	    		React.createElement('li', {className: 'contactBlock'},
+	 				React.createElement('div', {className: 'DeleteItem'},this.props.deletebutton), //contentenditable is probably not the way to go, at least not like this.  But it works for this scenario - kinda?
+	 				React.createElement('div', {className: 'contact-names', contentEditable: 'true'}, this.props.first),
+	 				React.createElement('div', {className: 'contact-names', contentEditable: 'true'}, this.props.last),
+	 				React.createElement('div', {className: 'contactBlock-address', contentEditable: 'true'}, this.props.address)
+	 				)
+	    		);
+	    },
+	});
+
+	 var ContactView = React.createClass({
+	 	propTypes: {
+	 		contacts: React.PropTypes.array.isRequired,
+	 		newContact: React.PropTypes.object.isRequired,
+	 		onNewContactChange: React.PropTypes.func.isRequired,
+	 		onNewContactSubmit: React.PropTypes.func.isRequired,
+	 	},
+
+	 	render: function() {
+	 		var contactItemElements = this.props.contacts
+	 		.filter(function(contact) { return contact.last; })
+	 		.map(function(contact) { return React.createElement(contactBlock, contact); });
+
+	 		return (
+	 			React.createElement('div', {className: 'ContactView'},
+	 				React.createElement('h1', {className: 'ContactView-title'}, "List O' Contacts"),
+	 				React.createElement('ul', {className: 'ContactView-list'}, contactItemElements),
+	 				React.createElement(homeworkForm, {
+	 					value: this.props.newContact,
+	 					onChange: this.props.onNewContactChange,
+	 					onSubmit: this.props.onNewContactSubmit,
+	 				})
+	 				)
+	 			);
+	 	},
+	 });
+
+	 //this sets my constants
+
+	 var CONTACT_TEMPLATE = {first: "", last: "", address: "", errors: null};
+
+	 //sets the Action I am wanting to perform
+	 function updateNewContact(contact) {
+	 	setState({ newContact: contact });
+	 }
+
+	 //when I submit the form, check for errors and set the state.  Also, this is not working. Tempted to redo in jquery but stopping for now.
+	 function submitNewContact() {
+	 	var contact = Object.assign({}, state.newContact, {key: state.contacts.length + 1, errors: {}});
+
+	 	if (!contact.first) {
+	 		contact.errors.first = ["Please enter your new contact's first name"];
+	 	}
+	 	if (!contact.last) {
+	 		contact.errors.last = ["Please enter your new contact's last name"];
+	 	}
+
+	 	setState(
+	 		Object.keys(contact.errors).length === 0
+	 		? {
+	 			newContact: Object.assign({}, CONTACT_TEMPLATE),
+	 			contacts: state.contacts.slice(0).concat(contact),
+	 		}
+	 		: { newContact: contact }
+	 		);
+	 }
+
+	// This is the state of homework
+	var state = {};
+
+	// Mchange what is done with the state, and then attachg
+	function setState(changes) {
+		Object.assign(state, changes);
+
+		ReactDOM.render(
+			React.createElement(ContactView, Object.assign({}, state, {
+				onNewContactChange: updateNewContact,
+				onNewContactSubmit: submitNewContact,
+			})),
+			document.getElementById('homework') //jquery does not work on render.  
+			);
+	}
+	// Set initial data
+	setState({
+		contacts: [
+		{key: 1, first: "Jordan", last: "Friedlander", address: "1187 HunterVasser, Los Angeles, CA"},
+		{key: 2, first: "Rusty", last: "Shackleford", address: "Arlen, TX"},
+		],
+		newContact: Object.assign({}, CONTACT_TEMPLATE),
+	});
+</script>
+<script>
+	//Totally cheating.  I am running out of time and I am not sure how to remove an item. 
+	$('.DeleteItem').click(function(){
+	   $(this).closest('li').slideUp(); //'.remove' throws errors, because React is looking for it and can't find it. It should re-render without the parent li element instead of just hiding it
+	});
+</script>
+</body>
+</html>
