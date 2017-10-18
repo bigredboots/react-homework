@@ -112,6 +112,8 @@
 <body>
 	<!--this calls the whole app into homework -->
 	<div id="homework"></div>
+	<!--without this react does not work in IE -->
+	<script src="https://cdn.rawgit.com/zloirock/core-js/master/client/shim.min.js"></script> 
 	<!-- calling .min sets it to production react code.  I shouldn't be using contenteditable, but using prod code eliminates the errors -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react.min.js"></script>
 
@@ -284,9 +286,9 @@
 	});
 </script>
 <script>
-	//Totally cheating.  I am running out of time and I am not sure how to remove an item. 
+	//Because of time and knowledge contraints, I am removing the element via Jquery, instead of the preferred method of re-renderin without the parent li element. 
 	$('.DeleteItem').click(function(){
-	   $(this).closest('li').slideUp(); //'.remove' throws errors, because React is looking for it and can't find it. It should re-render without the parent li element instead of just hiding it
+	   $(this).closest('li').slideUp();
 	});
 </script>
 </body>
